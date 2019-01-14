@@ -8,6 +8,7 @@ package terraria;
 import DLibX.DConsole;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -16,17 +17,7 @@ import java.util.Random;
  */
 public class Player {
 
-    protected int inventorySlot1;
-    protected int inventorySlot2;
-    protected int inventorySlot3;
-    protected int inventorySlot4;
-    protected int inventorySlot5;
-    protected int inventorySlot6;
-    protected int inventorySlot7;
-    protected int inventorySlot8;
-    protected int inventorySlot9;
-    protected int inventorySlot10;
-    
+    protected ArrayList<Inventory> inventory = new ArrayList();
     
     
     protected int xCoordinates;
@@ -42,8 +33,8 @@ public class Player {
     protected int jumpingTimer = 0;
     protected double health;
 
-    protected double TERMINAL_VELOCITY = 2;
-    protected double GRAVITY = 1;
+    protected double TERMINAL_VELOCITY = 0.4;
+    protected double GRAVITY = 0.1;
     protected int LEFT_DIRECTION = 0;
     protected int RIGHT_DIRECTION = 1;
 
@@ -69,6 +60,10 @@ public class Player {
         this.currentImage = img;
         this.jumpUp = jump;
         this.dc = d;
+        
+        for(int i = 0; i < 10; i++){
+          inventory.add(new Inventory(0, 0, dc));
+        }
     }
 
     public void draw() {
@@ -142,6 +137,25 @@ public class Player {
         }
     }
     
+    public void changeVelocity(double v){
+     velocity = v;
+    }
+    
+    public void updatePosition(){
+     scrollY += velocity;
+    }
+    
+    public void updateGravity(){
+     velocity -= GRAVITY;
+     if(velocity < TERMINAL_VELOCITY * -1){
+       velocity = TERMINAL_VELOCITY * -1;
+     }
+    }
+    
+    public void riseUp(double h){
+      velocity += h;
+    }
+            
     public void goUp(){
        scrollY += 1;
     }
@@ -182,34 +196,9 @@ public class Player {
         yCoordinates = y;
     }
     
-    public void setSlot(int slot, int id){
-        switch(slot){
-          case 1: inventorySlot1 = id;
-          case 2: inventorySlot2 = id;
-          case 3: inventorySlot3 = id;
-          case 4: inventorySlot4 = id;
-          case 5: inventorySlot5 = id;
-          case 6: inventorySlot6 = id;
-          case 7: inventorySlot7 = id;
-          case 8: inventorySlot8 = id;
-          case 9: inventorySlot9 = id;
-          case 10: inventorySlot10 = id;
-        }
+    public void setSlot(int slot, int id, int amount){
+      inventory.remove(slot - 1);
+      inventory.add(slot - 1, new Inventory(id, amount, dc));
     }
     
-    public int getSlot(int slot){
-      switch(slot){
-          case 1: return inventorySlot1;
-          case 2: return inventorySlot2;
-          case 3: return inventorySlot3;
-          case 4: return inventorySlot4;
-          case 5: return inventorySlot5;
-          case 6: return inventorySlot6;
-          case 7: return inventorySlot7;
-          case 8: return inventorySlot8;
-          case 9: return inventorySlot9;
-          case 10: return inventorySlot10;
-          default: return -1;
-        }
-    }
 }

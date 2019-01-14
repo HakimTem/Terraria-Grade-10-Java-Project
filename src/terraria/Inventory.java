@@ -6,6 +6,7 @@
 package terraria;
 
 import DLibX.DConsole;
+import java.awt.Font;
 import java.util.ArrayList;
 
 /**
@@ -17,24 +18,20 @@ public class Inventory {
     protected Player player;
     protected DConsole dc;
     
-    protected ArrayList<String> holdableItems = new ArrayList<String>();
-    
-    public Inventory(Player p, DConsole d){
-      player = p;
-      dc = d;
-      
-      for(int i = 0; i < 3000; i++){
-      holdableItems.add("Sprites/Item_" + i + ".png");
-      }
+    private int amount = 0;
+    private int id = 0;
+
+    public Inventory(int i, int a, DConsole d){
+        this.id = i;
+        this.amount = a;
+        this.dc = d;
     }
     
-    public void draw(){
-      for(int i = 0; i < 10; i++){
-        int x = 50 + i * 55;
-        int y = 50;
-        dc.drawImage("main_inventory.png", x, y);
-      }
-      
-        dc.drawImage(holdableItems.get(player.getSlot(1)), 50, 50);
+    public int getId(){
+     return id;
+    }
+    
+    public int getAmount(){
+     return amount;
     }
 }

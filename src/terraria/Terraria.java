@@ -74,14 +74,12 @@ public class Terraria {
     static public Grid terrariaGrid = new Grid(100, 100, dc);
 
     //Create the player object
-    static Player player = new Player(453, 445, standingLibrary, leftLibrary, rightLibrary,
+    static Player player = new Player(450, 445, standingLibrary, leftLibrary, rightLibrary,
             jumpingLibrary, "player_standing_left.png", dc);
 
     //Create an array of all the bosses
     public static ArrayList<EyeOfCthulhu> eye = new ArrayList<EyeOfCthulhu>();
 
-    //Create an inventory object that tracks whats in the inventory
-    public static Inventory playerInventory = new Inventory(player, dc);
 
     //Create an engine object which does everything like generation of the world to detecting hitboxes
     public static Engine terraria = new Engine(terrariaGrid, dc, player);
@@ -115,6 +113,9 @@ public class Terraria {
         //Set the Perlin Noise to be a certain wave
         terrain.SetNoiseType(FastNoise.NoiseType.PerlinFractal);
         terrain.SetFrequency(0.001f);
+        
+        dc.registerFont("Andy Bold.ttf");
+        
 
         //Record all the y values of the terrain based on Perlin Noise functions
         for (int i = 0; i < 1000; i++) {
@@ -122,6 +123,7 @@ public class Terraria {
             terrainLocation.add(y);
             xoff += 10;
         }
+        
 
         //Loop for everything
         while (true) {
@@ -202,7 +204,7 @@ public class Terraria {
             });
 
             //Draw the players inventory
-            playerInventory.draw();
+            terraria.drawInventory();
 
             //Draw the players sprite
             player.draw();
@@ -214,40 +216,40 @@ public class Terraria {
             dc.pause(20);
 
             //If a key is pressed the player will move in that direction and ifnot touching the ground will change sprite
-            if ((dc.isKeyPressed(65) || dc.isKeyPressed(37)) && groundDetection >= 1 && !(scrollX >= 30) && wallRightDetection == 0) {
+            if ((dc.isKeyPressed(65) || dc.isKeyPressed(37)) && groundDetection >= 1 && wallRightDetection == 0) {
                 player.changeDirection(player.LEFT_DIRECTION);
                 player.move();
-            } else if ((dc.isKeyPressed(68) || dc.isKeyPressed(39)) && groundDetection >= 1 && !(scrollX <= -80) && wallLeftDetection == 0) {
+            } else if ((dc.isKeyPressed(68) || dc.isKeyPressed(39)) && groundDetection >= 1 && wallLeftDetection == 0) {
                 player.changeDirection(player.RIGHT_DIRECTION);
                 player.move();
-            } else if ((dc.isKeyPressed(65) || dc.isKeyPressed(37)) && groundDetection == 0 && !(scrollX >= 30) && wallRightDetection == 0) {
+            } else if ((dc.isKeyPressed(65) || dc.isKeyPressed(37)) && groundDetection == 0 && wallRightDetection == 0) {
                 player.changeDirection(player.LEFT_DIRECTION);
                 player.moveWithoutChanging();
-            } else if ((dc.isKeyPressed(68) || dc.isKeyPressed(39)) && groundDetection == 0 && !(scrollX <= -80) && wallLeftDetection == 0) {
+            } else if ((dc.isKeyPressed(68) || dc.isKeyPressed(39)) && groundDetection == 0 && wallLeftDetection == 0) {
                 player.changeDirection(player.RIGHT_DIRECTION);
                 player.moveWithoutChanging();
             }
 
-            //If a key is pressed then jump
-            if (dc.getKeyPress(' ') && groundDetection >= 1) {
-                jumpingTimer = 30;
-                player.jump();
-            } else if (groundDetection >= 1 && !(dc.isKeyPressed(65)) && !(dc.isKeyPressed(37))
-                    && !(dc.isKeyPressed(68)) && !(dc.isKeyPressed(39))) {
-                player.stand();
+            if(groundDetection ==  0){
+               player.updateGravity();
+               player.jump();
             }
-
-            //f not touching any ground switch sprites and go down
-            if (groundDetection == 0) {
-                player.goDown();
-                player.jump();
+            
+            if(groundDetection >= 1){
+               player.changeVelocity(0);
             }
-
-            //If the jump has been initiated then start going up for a certain amount of time
-            if (jumpingTimer > 0) {
-                player.jump();
-                player.goUp();
-                jumpingTimer--;
+            
+            if(groundDetection >= 1 && dc.getKeyPress(' ')){
+                player.riseUp(0.75);
+            }
+           
+            if(jumpingTimer > 0){
+              player.riseUp(0.2);
+              jumpingTimer --;
+            }
+            
+            if(!(dc.isKeyPressed('a') || dc.isKeyPressed('d') || dc.isKeyPressed(' ') || dc.isKeyPressed(37) || dc.isKeyPressed(39) || groundDetection == 0)){
+              player.stand();
             }
 
             //If the r button is pressed then respawn at a certain position
@@ -263,7 +265,7 @@ public class Terraria {
 
             //if the i button is pressed add something to the inventory
             if (dc.isKeyPressed('i')) {
-                player.setSlot(1, 1765);
+                player.setSlot(1, 3827, 1);
             }
 
             //Add the second timer for the deteration of rapid key press
@@ -274,6 +276,8 @@ public class Terraria {
                 item.flyToPlayer();
             });
 
+            
+            player.updatePosition();
         }
     }
 

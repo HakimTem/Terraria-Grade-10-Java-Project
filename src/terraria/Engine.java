@@ -6,6 +6,7 @@
 package terraria;
 
 import DLibX.DConsole;
+import java.awt.Font;
 import java.util.ArrayList;
 import static terraria.Terraria.terraria;
 
@@ -27,19 +28,25 @@ public class Engine {
     protected ArrayList<Block> world = new ArrayList<Block>();
     protected ArrayList<Block> render = new ArrayList<Block>();
 
+    
     public Engine(Grid g, DConsole d, Player p) {
         this.mGrid = g;
         this.dc = d;
         this.player = p;
+        dc.registerFont("Andy Bold.ttf");
     }
 
     public void startScreen() {
         dc.drawImage("title_screen_background.png", 450, 350);
     }
+    
+    
 
     public void broadcast(String name) {
         signal = name;
     }
+    
+   
     
     public void addBlock(String texture, double x, double y){
                 double xc = x + player.scrollX;
@@ -93,11 +100,32 @@ public class Engine {
         render.forEach(item -> {
             item.draw();
         });
+        
     }
 
     public void clearWorld() {
         world.clear();
         render.clear();
+    }
+    
+    public void drawInventory(){
+        for(int i = 0; i < 10; i++){
+        int x = 50 + i * 61;
+        int y = 50;
+        dc.drawImage("main_inventory.png", x, y);
+      }
+        
+        for(int i = 0; i < 10; i++){
+        int x = 50 + i * 61 - 20;
+        int y = 50 - 20;
+        dc.setFont(new Font("Andy Bold", 14, 14));
+        dc.drawString(i, x, y);
+      }
+        
+        for(int i = 0; i < 10; i++){
+           dc.drawImage("Sprites/Item_" + player.inventory.get(i).getId() + ".png", 50, 50);
+        }
+       
     }
 
     public Block getBlock(double x, double y) {
