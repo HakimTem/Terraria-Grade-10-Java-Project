@@ -37,6 +37,6 @@ public class Boss {
     }
 
     public void draw() {
-            dc.drawImage(currentImage, xCoordinates + player.scrollX * 10, yCoordinates + player.scrollY * 10);
+            dc.drawImage(currentImage, xCoordinates + player.scrollX * 16, yCoordinates + player.scrollY * 16);
     }
 }

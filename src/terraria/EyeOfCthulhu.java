@@ -26,9 +26,9 @@ public class EyeOfCthulhu extends Boss {
     }
 
     public void flyToPlayer() {
-        if (xCoordinates + player.scrollX * 10 > player.xCoordinates) {
+        if (xCoordinates + player.scrollX * 16 > player.xCoordinates) {
             xCoordinates -= 2.5;
-        } else if (xCoordinates + player.scrollX * 10 < player.xCoordinates) {
+        } else if (xCoordinates + player.scrollX * 16 < player.xCoordinates) {
             xCoordinates += 2.5;
         }
         currentImage = phaseOne[costumeNumber].getImage();

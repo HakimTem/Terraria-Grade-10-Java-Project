@@ -8,7 +8,6 @@ package terraria;
 import DLibX.DConsole;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -17,9 +16,17 @@ import java.util.Random;
  */
 public class Player {
 
-    protected ArrayList<Inventory> inventory = new ArrayList();
-    
-    
+    protected int inventorySlot1;
+    protected int inventorySlot2;
+    protected int inventorySlot3;
+    protected int inventorySlot4;
+    protected int inventorySlot5;
+    protected int inventorySlot6;
+    protected int inventorySlot7;
+    protected int inventorySlot8;
+    protected int inventorySlot9;
+    protected int inventorySlot10;
+
     protected int xCoordinates;
     protected double yCoordinates;
     protected Sprite[] stand;
@@ -33,8 +40,8 @@ public class Player {
     protected int jumpingTimer = 0;
     protected double health;
 
-    protected double TERMINAL_VELOCITY = 0.4;
-    protected double GRAVITY = 0.1;
+    protected double TERMINAL_VELOCITY = 0.6;
+    protected final double GRAVITY = 0.01;
     protected int LEFT_DIRECTION = 0;
     protected int RIGHT_DIRECTION = 1;
 
@@ -43,11 +50,13 @@ public class Player {
     protected int MOVE = 1;
     protected int DISSAPPEAR = 2;
     protected int SHOW = 3;
-    
-    protected int SLOT_EMPTY  = -1;
+
+    protected int SLOT_EMPTY = -1;
 
     protected double scrollX = 0;
     protected double scrollY = 0;
+    
+    protected int directionStanding = 0;
 
     protected DConsole dc;
 
@@ -60,20 +69,13 @@ public class Player {
         this.currentImage = img;
         this.jumpUp = jump;
         this.dc = d;
-        
-        for(int i = 0; i < 10; i++){
-          inventory.add(new Inventory(0, 0, dc));
-        }
     }
 
     public void draw() {
         dc.drawImage(currentImage, xCoordinates, yCoordinates);
     }
 
-    public void show() {
-        setX(450);
-        setY(450);
-    }
+
 
     public void stand() {
         if (direction == LEFT_DIRECTION) {
@@ -89,10 +91,6 @@ public class Player {
         direction = d;
     }
 
-    public void dissappear() {
-        setX(10000);
-        setY(10000);
-    }
 
     public void move() {
         if (direction == LEFT_DIRECTION) {
@@ -102,6 +100,7 @@ public class Player {
             if (costumeNumber + 1 > moveLeft.length) {
                 costumeNumber = 0;
             }
+            directionStanding = LEFT_DIRECTION;
         } else if (direction == RIGHT_DIRECTION) {
             scrollX -= 0.25;
             currentImage = moveRight[costumeNumber].getImage();
@@ -109,6 +108,7 @@ public class Player {
             if (costumeNumber + 1 > moveRight.length) {
                 costumeNumber = 0;
             }
+            directionStanding = RIGHT_DIRECTION;
         }
     }
 
@@ -132,73 +132,106 @@ public class Player {
     public void jump() {
         if (direction == LEFT_DIRECTION) {
             currentImage = jumpUp[0].getImage();
-        } else if (direction == RIGHT_DIRECTION) { 
+        } else if (direction == RIGHT_DIRECTION) {
             currentImage = jumpUp[1].getImage();
         }
     }
-    
-    public void changeVelocity(double v){
-     velocity = v;
+
+    public void updateVelocity(double value){
+      velocity = value;
     }
     
     public void updatePosition(){
-     scrollY += velocity;
+      scrollY += velocity;
     }
     
     public void updateGravity(){
-     velocity -= GRAVITY;
-     if(velocity < TERMINAL_VELOCITY * -1){
-       velocity = TERMINAL_VELOCITY * -1;
-     }
+      velocity -= GRAVITY;
+      if(velocity < TERMINAL_VELOCITY * -1){
+         velocity = TERMINAL_VELOCITY * -1;
+      }
     }
     
-    public void riseUp(double h){
-      velocity += h;
-    }
-            
-    public void goUp(){
-       scrollY += 1;
+    public void riseUp(double height){
+       velocity += height;
+       scrollY += velocity;
     }
     
-    public void goDown(){
-       scrollY -= 0.5;
+    public void dissappear(){
+       xCoordinates = 100000;
     }
     
-    public void setHealth(double h){
-     health = h;
-    }
-    
-    public void changeHealth(double c){
-     health -= c;
-    }
-    
-    public double getHealth(){
-     return health;
+    public void show(){
+       xCoordinates = 446;
     }
 
-    public void stay() {
-        velocity = 0;
+    public void updateVelocity(int v) {
+        velocity = v;
     }
 
-    public int getX() {
-        return xCoordinates;
+    public void setHealth(double h) {
+        health = h;
     }
 
-    public double getY() {
-        return yCoordinates;
+    public void changeHealth(double c) {
+        health -= c;
     }
 
-    public void setX(int x) {
-        xCoordinates = x;
+    public double getHealth() {
+        return health;
     }
 
-    public void setY(int y) {
-        yCoordinates = y;
+
+
+    public void setSlot(int slot, int id) {
+        switch (slot) {
+            case 1:
+                inventorySlot1 = id;
+            case 2:
+                inventorySlot2 = id;
+            case 3:
+                inventorySlot3 = id;
+            case 4:
+                inventorySlot4 = id;
+            case 5:
+                inventorySlot5 = id;
+            case 6:
+                inventorySlot6 = id;
+            case 7:
+                inventorySlot7 = id;
+            case 8:
+                inventorySlot8 = id;
+            case 9:
+                inventorySlot9 = id;
+            case 10:
+                inventorySlot10 = id;
+        }
     }
-    
-    public void setSlot(int slot, int id, int amount){
-      inventory.remove(slot - 1);
-      inventory.add(slot - 1, new Inventory(id, amount, dc));
+
+    public int getSlot(int slot) {
+        switch (slot) {
+            case 1:
+                return inventorySlot1;
+            case 2:
+                return inventorySlot2;
+            case 3:
+                return inventorySlot3;
+            case 4:
+                return inventorySlot4;
+            case 5:
+                return inventorySlot5;
+            case 6:
+                return inventorySlot6;
+            case 7:
+                return inventorySlot7;
+            case 8:
+                return inventorySlot8;
+            case 9:
+                return inventorySlot9;
+            case 10:
+                return inventorySlot10;
+            default:
+                return -1;
+        }
     }
-    
 }
