@@ -268,6 +268,10 @@ public class Terraria {
                 player.setSlot(1, 3827, 1);
             }
 
+            if(dc.getMouseButton(1) && player.inventory.get(0).getId() == 3827){
+              terraria.addProjectile(200, 500, 684);
+            }
+            
             //Add the second timer for the deteration of rapid key press
             secondTimer += 1;
 

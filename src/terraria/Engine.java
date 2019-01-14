@@ -7,6 +7,7 @@ package terraria;
 
 import DLibX.DConsole;
 import java.awt.Font;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import static terraria.Terraria.terraria;
 
@@ -27,6 +28,9 @@ public class Engine {
 
     protected ArrayList<Block> world = new ArrayList<Block>();
     protected ArrayList<Block> render = new ArrayList<Block>();
+    
+    protected ArrayList<Projectile> projectiles = new ArrayList();
+    protected ArrayList<Projectile> projectileRender = new ArrayList();
 
     
     public Engine(Grid g, DConsole d, Player p) {
@@ -46,7 +50,9 @@ public class Engine {
         signal = name;
     }
     
-   
+    public void addProjectile(int x, int y, int id){
+      projectiles.add(new Projectile(x, y, id, dc, player));
+    }
     
     public void addBlock(String texture, double x, double y){
                 double xc = x + player.scrollX;
@@ -94,18 +100,31 @@ public class Engine {
                 render.add(item);
             }
         });
+        
+        projectiles.forEach(item -> {
+          if(!(item.xCoordinates + player.scrollX * 16 >= 910 || item.yCoordinates + player.scrollY * 16 >= 610 ||item.xCoordinates + player.scrollX * 16 <= -10 || item.yCoordinates + player.scrollY * 16 <= -10)) {
+                projectileRender.add(item);
+            }
+        });
     }
+    
 
     public void generateWorld() {
         render.forEach(item -> {
             item.draw();
         });
         
+        projectileRender.forEach(item -> {
+          dc.setTransform(AffineTransform.getRotateInstance(Math.toRadians(90)));
+          item.draw();
+          dc.setTransform(AffineTransform.getRotateInstance(Math.toRadians(0)));
+        });
     }
 
     public void clearWorld() {
         world.clear();
         render.clear();
+        projectileRender.clear();
     }
     
     public void drawInventory(){
